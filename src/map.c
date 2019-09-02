@@ -42,19 +42,19 @@ bool makingRouteFreer(char *a, char *b, Route r, Quest q) {
 bool properName(const char* name) {
     if (strlen(name) == 0)
         return false;
-    
+
     int i = 0;
-    
+
     while (name[i] != '\0') {
         if ((name[i] < 32 && name[i] > 0) || name[i] == ';')
             return false;
-        
+
         i++;
     }
     return true;
 }
 
-/** @brief Sprawdza, czy podany rok istnieje
+/** @brief Sprawdza, czy podany rok istnieje.
  * @param[in] year        – numer roku.
  * @return Wartość @p true, jeśli numer roku jest różny od zera,
  * wartość @p false w przeciwnym wypadku.
@@ -62,7 +62,7 @@ bool properName(const char* name) {
 bool properYear(int year) {
     if (year != 0)
         return true;
-    
+
     return false;
 }
 
@@ -83,7 +83,7 @@ bool constructDescription(Map *map, char **text, Stop stop,
                           size_t charSize, size_t maxSize) {
     if (stop->right == NULL)
         return true;
-    
+
     char *c1 = stop->name, *c2 = stop->right->name;
     Cities cities = searchHash(map->bindings, c2);
     CityNext way = findElt(cities->first, c1);
@@ -91,18 +91,18 @@ bool constructDescription(Map *map, char **text, Stop stop,
     char *yearChar, *distanceChar;
     yearChar = numberToChar(way->year);
     distanceChar = numberToChar(way->length);
-    
+
     if (yearChar == NULL || distanceChar == NULL) {
         free(yearChar);
         free(distanceChar);
         return false;
     }
-    
+
     size_t yearSize = strlen(yearChar);
     size_t distSize = strlen(distanceChar);
     size_t citySize = strlen(c2);
     size_t charsToAdd = 3 + yearSize + distSize + citySize;
-    
+
     // jeśli jest za mało miejsca, trzeba powiększyć
     while (charSize + charsToAdd + 1 >= maxSize) {
         maxSize *= 2;
@@ -114,7 +114,7 @@ bool constructDescription(Map *map, char **text, Stop stop,
         free(distanceChar);
         return false;
     }
-    
+
     // dopisanie bloku
     strcpy(&(*text)[charSize], ";");
     strcpy(&(*text)[charSize + 1], distanceChar);
@@ -142,10 +142,10 @@ bool constructDescription(Map *map, char **text, Stop stop,
  */
 bool mCopy(char **dir, char *src, size_t start, size_t end) {
     *dir = malloc(end - start + 2);
-    
+
     if (*dir == NULL)
         return false;
-    
+
     memcpy(*dir, &src[start], end - start + 1);
     char *place;
     place = *dir;
@@ -153,7 +153,7 @@ bool mCopy(char **dir, char *src, size_t start, size_t end) {
     return true;
 }
 
-/** @brief Wykonuje zlecenie
+/** @brief Wykonuje zlecenie.
  * Wykonuje operacje budowy lub naprawy dróg pod drogę krajową, zgodnie
  * ze strukturą.
  * @param[in] map          – wskaźnik na strukturę przechowującą mapę dróg;
@@ -164,7 +164,7 @@ bool mCopy(char **dir, char *src, size_t start, size_t end) {
 bool performQuest(Map *map, Quest quest) {
     while (quest->first != NULL) {
         Data data = popData(quest);
-        
+
         // przypadek budowy
         if (data->toBuild) {
             if (!addRoad(map, data->start, data->end, data->length, data->year))
@@ -175,13 +175,13 @@ bool performQuest(Map *map, Quest quest) {
             if (!repairRoad(map, data->start, data->end, data->year))
                 return false;
         }
-        
+
         deleteData(data);
     }
     return true;
 }
 
-/** @brief Sprawdza możliwość budowy odcinka i dodaje go
+/** @brief Sprawdza możliwość budowy odcinka i dodaje go.
  * Pobiera z napisu potrzebne dane na temat odcinka (w tym przypisuje wskaźnikowi
  * end napis, który przekazuje do funkcji @ref makeANewRoute), po czym sprawdza,
  * czy odcinek istnieje. Jeśli tak, czy wymaga remontu oraz czy długość jest
@@ -209,39 +209,39 @@ bool addToRouteAndQuest(Map *map, char *descr, Quest quest, Route r,
     int year;
     unsigned length;
     char *lengthChar = NULL, *yearChar = NULL;
-    
+
     // skopiowanie oraz konwersja potrzebnych danych
     if (!mCopy(&lengthChar, descr, lenPos, yrPos - 2))
         return false;
-    
+
     length = correctUnsigned(lengthChar);
     free(lengthChar);
-    
+
     if (!mCopy(&yearChar, descr, yrPos, c2Pos - 2))
         return false;
-    
+
     year = iYear(yearChar);
     free(yearChar);
-    
+
     if (!mCopy(end, descr, c2Pos, scanner - 1))
         return false;
-    
+
     // jakakolwiek sprzeczność kończy funkcję falsem
     if (!properName(start) || !properName(*end) || !properYear(year)
                 || !length || sameCity(start, *end) || isPart(r, *end))
         return false;
-    
+
     // sprawdza, czy trzeba utworzyć lub naprawić drogę
     // jeśli tak, to odnotowuje to w zleceniu
     // jakakolwiek sprzeczność zamyka funkcję
     Cities linkList1 = searchHash(map->bindings, start);
-    
+
     if (linkList1 != NULL) {
         if (contains(linkList1->first, *end)) {
             CityNext way = findElt(linkList1->first, *end);
             if (way->length != length || way->year > year)
                 return false;
-            
+
             else if (way->year < year)
                 if (!pushData(quest, start, *end, length, year, false))
                     return false;
@@ -251,12 +251,12 @@ bool addToRouteAndQuest(Map *map, char *descr, Quest quest, Route r,
     }
     else if (!pushData(quest, start, *end, length, year, true))
         return false;
-    
+
     // dodanie miasta do drogi
     if(!addRight(r, *end))
         return false;
-    
-    return true; 
+
+    return true;
 }
 
 /***FUNKCJE GLOBALNE***/
@@ -272,21 +272,21 @@ Map* newMap(void) {
     Map *m;
     m = NULL;
     m = (Map*) malloc(sizeof(Map));
-    
+
     if (m == NULL)
         return m;
-    
+
     m->bindings = NULL;
     m->bindings = newTable();
-    
+
     if (m->bindings == NULL) {
         free(m);
         return m;
     }
-    
+
     for (int i = 0; i < 1000; i++)
         m->routes[i] = NULL;
-    
+
     return m;
 }
 
@@ -297,10 +297,10 @@ Map* newMap(void) {
  */
 void deleteMap(Map *map) {
     deleteTable(map->bindings);
-    
+
     for (int i = 0; i < 1000; i++)
         deleteRoute(map->routes[i]);
-    
+
     free(map);
 }
 
@@ -321,47 +321,47 @@ bool addRoad(Map *map, const char *city1, const char *city2,
              unsigned length, int builtYear) {
     if (map == NULL)
         return false;
-    
+
     Hash mb = map->bindings;
-    
+
     // odrzucenie błędnych danych
     if (!properName(city1) || !properName(city2) || sameCity(city1, city2))
         return false;
-    
+
     if (!properYear(builtYear) || length == 0)
         return false;
-    
+
     // jeśli miasta nie mają swoich struktur w tablicy hasz., należy je utworzyć
     if (searchHash(mb, city1) == NULL) {
         Cities list = newList();
-        
+
         if (list == NULL)
             return false;
-        
+
         if (!insertHash(mb, city1, list)) {
             deleteList(list);
             return false;
         }
     }
-    
+
     if (searchHash(mb, city2) == NULL) {
         Cities list = newList();
-        
+
         if (list == NULL)
             return false;
-        
+
         if (!insertHash(mb, city2, list)) {
             deleteList(list);
             return false;
         }
     }
-    
+
     // program szuka struktur i dopisuje do nich miasta
     Cities linkList1 = searchHash(mb, city1), linkList2 = searchHash(mb, city2);
-    
+
     if (contains(linkList1->first, city2))
         return false;
-    
+
     if (addCity(linkList1, city2, length, builtYear)) {
         if (!addCity(linkList2, city1, length, builtYear)) {
             deleteCity(linkList1, city2);
@@ -388,42 +388,42 @@ bool addRoad(Map *map, const char *city1, const char *city2,
  * podanymi miastami, podany rok jest wcześniejszy niż zapisany dla tego
  * odcinka drogi rok budowy lub ostatniego remontu.
  */
-bool repairRoad(Map *map, const char *city1, 
+bool repairRoad(Map *map, const char *city1,
                 const char *city2, int repairYear) {
     Hash mb;
     if (map == NULL)
         return false;
-    
+
     mb = map->bindings;
-    
+
     // odrzucenie błędnych danych
     if (!properName(city1) || !properName(city2) || sameCity(city1, city2))
         return false;
-    
+
     if (properYear(repairYear) == false)
         return false;
-    
+
     if (searchHash(mb, city1) == NULL || searchHash(mb, city2) == NULL)
         return false;
-    
+
     // wyszukanie struktur i przeprowadzenie operacji
     // odrzucenie przypadku nieistnienia drogi oraz
     // wcześniejszego remontu
     Cities linkList1 = searchHash(mb, city1), linkList2 = searchHash(mb, city2);
-    
+
     if (!contains(linkList1->first, city2))
         return false;
-    
+
     CityNext connection1 = findElt(linkList1->first, city2);
     CityNext connection2 = findElt(linkList2->first, city1);
-    
+
     if (repairYear < connection1->year || repairYear < connection2->year)
         return false;
     else {
         connection1->year = repairYear;
         connection2->year = repairYear;
     }
-    
+
     return true;
 }
 
@@ -448,37 +448,37 @@ bool newRoute(Map *map, unsigned routeId,
              const char *city1, const char *city2) {
     // odrzucenie błędnych danych
     if (map == NULL) return false;
-    
+
     Hash mb = map->bindings;
-    
+
     if (!properName(city1) || !properName(city2) || sameCity(city1, city2))
         return false;
-    
+
     if (searchHash(mb, city1) == NULL || searchHash(mb, city2) == NULL)
         return false;
-    
+
     if (routeId < 1 || routeId > 999)
         return false;
-    
+
     if (map->routes[routeId] != NULL)
         return false;
-    
+
     // przeprowadzenie algorytmu Dijkstry
     HeapCard card = NULL;
     card = dijkstra(map->bindings, city1, city2, NULL, false);
-    
+
     // jeśli nie otrzymaliśmy najlepszej konstrukcji, zwraca false
     if (card == NULL)
         return false;
-    
+
     // na podstawie opisu tworzy drogę
     Route r = card->construction;
     card->construction = NULL;
     deleteCard(card);
-    
+
     if(r == NULL)
         return false;
-    
+
     map->routes[routeId] = r;
     return true;
 }
@@ -504,50 +504,50 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
     // odrzucenie błędnych danych
     if (map == NULL)
         return false;
-    
+
     if (searchHash(map->bindings, city) == NULL)
         return false;
-    
+
     if (routeId < 1 || routeId > 999)
         return false;
-    
+
     Route route = map->routes[routeId];
-    
+
     if (route == NULL)
         return false;
-    
+
     if (!strcmp(city, route->first->name) || !strcmp(city, route->last->name))
         return false;
-    
+
     // przeprowadzenie algorytmu Dijkstry w wersji „do któregokolwiek z dwóch”
     HeapCard card = doubleDijkstra(map->bindings, city, route);
-    
+
     // w przypadku braku wyłonienia najlepszego kandydata
     if (card == NULL) {
         return false;
     }
-    
+
     // rozstrzyga, do którego z końców doszło rozszerzenie i na podstawie tego
     // tworzy je, a następnie dobudowuje do drogi
     if (!strcmp(card->lastCity, route->first->name)) {
         Route r = card->construction;
         card->construction = NULL;
-        
+
         if (r == NULL) {
             deleteCard(card);
             return false;
         }
-        
+
         map->routes[routeId] = merge2Routes(r ,route);
     }
     else {
         Route r = revRoute(card->construction);
-        
+
         if (r == NULL) {
             deleteCard(card);
             return false;
         }
-        
+
         map->routes[routeId] = merge2Routes(route, r);
     }
     deleteCard(card);
@@ -573,32 +573,32 @@ bool extendRoute(Map *map, unsigned routeId, const char *city) {
  */
 bool removeRoad(Map* map, const char* city1, const char* city2) {
     // odrzucenie błędnych danych
-    
+
     if (map == NULL)
         return false;
-    
+
     if (!properName(city1) || !properName(city2))
         return false;
-    
+
     Hash mb;
     mb = map->bindings;
-    
+
     if (searchHash(mb, city1) == NULL || searchHash(mb, city2) == NULL)
         return false;
-    
+
     Cities list1 = searchHash(mb, city1);
     Cities list2 = searchHash(mb, city2);
     HeapCard card;
-    
+
     if (!contains(list1->first, city2))
         return false;
-    
+
     // tu będą trzymane gotowe „tasiemce” do „wklejenia”
     Route corrections[1000];
-    
+
     for (unsigned i = 1; i < 1000; i++)
         corrections[i] = NULL;
-    
+
     // należy rozpatrzyć, czy nie należy gdzieś skonstruować objazdu
     for (unsigned i = 1; i < 1000; i++)
         if (map->routes[i] != NULL) {
@@ -607,14 +607,14 @@ bool removeRoad(Map* map, const char* city1, const char* city2) {
             if (existsPath(map->routes[i]->first, city1, city2)) {
                 card = dijkstra(map->bindings, city1,
                                 city2, map->routes[i], true);
-                
+
                 if (card == NULL) {
                     for (unsigned j = 1; j < i; j++)
                         deleteRoute(corrections[j]);
-                    
+
                     return false;
                 }
-                
+
                 corrections[i] = card->construction;
                 card->construction = NULL;
                 deleteCard(card);
@@ -622,27 +622,27 @@ bool removeRoad(Map* map, const char* city1, const char* city2) {
             else if (existsPath(map->routes[i]->first, city2, city1)) {
                 card = dijkstra(map->bindings, city2,
                                 city1, map->routes[i], true);
-                
+
                 if (card == NULL) {
                     for (unsigned j = 1; j < i; j++)
                         deleteRoute(corrections[j]);
-                    
+
                     return false;
                 }
-                
+
                 corrections[i] = card->construction;
                 card->construction = NULL;
                 deleteCard(card);
             }
         }
-    
+
     // wkleja tasiemce do dróg w miejsce usuniętych oddinków
     for (unsigned i = 1; i < 1000; i++)
         if (corrections[i] != NULL) {
             map->routes[i] = replaceRoute(map->routes[i], corrections[i],
                         corrections[i]->first->name);
         }
-    
+
     // na końcu usuwa odcinek z hashmapy
     deleteCity(list1, city2);
     deleteCity(list2, city1);
@@ -667,7 +667,7 @@ bool removeRoad(Map* map, const char* city1, const char* city2) {
 char const* getRouteDescription(Map *map, unsigned routeId) {
     if (map == NULL)
         return NULL;
-    
+
     // przypadki braki drogi
     if (routeId < 1 || routeId > 999) {
         char *str = NULL;
@@ -676,7 +676,7 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
         str[0] = '\0';
         return str;
     }
-    
+
     if((map->routes[routeId]) == NULL) {
         char *str = NULL;
         str = malloc(1);
@@ -684,39 +684,39 @@ char const* getRouteDescription(Map *map, unsigned routeId) {
         str[0] = '\0';
         return str;
     }
-    
+
     // str – miejsce na opis, idInChar – miejsce na numer drogi
-    char *str = NULL, *idInChar = NULL; 
+    char *str = NULL, *idInChar = NULL;
     idInChar = numberToChar(routeId);
-    
+
     if (idInChar == NULL)
         return NULL;
-    
+
     size_t idLength = strlen(idInChar);
     size_t charSize = 1 + strlen(map->routes[routeId]->first->name) + idLength;
     str = malloc(charSize + 1);
-    
+
     if (str == NULL) {
         free(idInChar);
         return str;
     }
-    
+
     // na początek napisu musimy wstawić numer drogi
     memcpy(str, idInChar, idLength);
     free(idInChar);
     strcpy(&str[idLength], ";");
     // wstawiamy też od razu nazwę pierwszego miasta
     strcpy(&str[idLength + 1], map->routes[routeId]->first->name);
-    
+
     // kończymy napis
     if (!constructDescription(map, &str, map->routes[routeId]->first,
         charSize, charSize + 1))
         return NULL;
-    
+
     return str;
 }
 
-/** @brief Tworzy drogę krajową
+/** @brief Tworzy drogę krajową.
  * Tworzy nową drogę krajową na podstawie opisu, dodając brakujące
  * odcinki. O ile numer drogi jest prawidłowy i taka droga jeszcze nie istnieje,
  * tworzy nową na podstawie opisu w formacie takim, jak w getRouteDescripion
@@ -734,10 +734,10 @@ bool makeANewRoute(Map *map, unsigned no, char *descr) {
     //odrzucenie błędnych danych
     if (no < 1 || no > 999)
         return false;
-    
+
     if (map->routes[no] != NULL)
         return false;
-    
+
     // informacja na temat pozycji pierwszych znaków interesujących nas danych
     // scanner przechodzi cały napis i zatrzymuje się na średnikach i na końcu
     size_t scanner = 0, lenPos = 0, yrPos = 0, c2Pos = 0;
@@ -748,31 +748,31 @@ bool makeANewRoute(Map *map, unsigned no, char *descr) {
     int state = 0;
     Route r = NULL;
     Quest quest = newQuest(); //zlecenie budowy tudzież naprawy nowych odcinków
-    
+
     if (quest == NULL)
         return false;
-    
+
     // Najpierw program sprawdza, poprawność danych, jednocześnie tworząc drogę.
     while (oneMore) {
         // wywołanie przy dojściu do końca znaku jest ostatnim
         if (descr[scanner] == '\0') {
             if (state != 3)
                 return makingRouteFreer(start, NULL, r, quest);
-            
+
             oneMore = false;
         }
-        
+
         if(descr[scanner] == ';' || !oneMore) {
             if (state == 0) {
                 // pobranie informacji o pierwszym mieście i początek  drogi
                 if (!mCopy(&start, descr, 0, scanner - 1))
                     return makingRouteFreer(start, NULL, r, quest);
-                    
+
                 r = startRoute(start);
-                
+
                 if (r == NULL)
                     return makingRouteFreer(start, NULL, r, quest);
-                                
+
                 // wiemy już, że o ile wszystko jest prawidłowe, długość odcinka
                 // pojawia się w descr na poniższej pozycji, analog. w kolejnych
                 lenPos = scanner + 1;
@@ -791,7 +791,7 @@ bool makeANewRoute(Map *map, unsigned no, char *descr) {
                 if (!addToRouteAndQuest(map, descr, quest, r, start, &end, lenPos,
                     yrPos, c2Pos, scanner))
                     return makingRouteFreer(start, end, r, quest);
-                                
+
                 free(start);
                 start = end; //miasto końcowe staje się pocz. nowego odcinka
                 end = NULL;
@@ -799,22 +799,22 @@ bool makeANewRoute(Map *map, unsigned no, char *descr) {
                 state = 1;
             }
         }
-        
+
         if (oneMore)
             scanner++;
     }
     free(start);
-    
+
     // realizacja zlecenia
     if (!performQuest(map, quest))
         return makingRouteFreer(NULL, NULL, r, quest);
-    
+
     deleteQuest(quest);
     map->routes[no] = r;
     return true;
 }
 
-/** @brief Usuwa drogę krajową
+/** @brief Usuwa drogę krajową.
  * Jeżeli droga krajowa istnieje, usuwa ją z mapy.
  * @param[in,out] map       – wskaźnik na strukturę przechowującą mapę dróg;
  * @param[in] routeId       – numer drogi krajowej.
@@ -824,10 +824,10 @@ bool makeANewRoute(Map *map, unsigned no, char *descr) {
 bool removeRoute(Map *map, unsigned routeId) {
     if (routeId < 1 || routeId > 999)
         return false;
-    
+
     if (map->routes[routeId] == NULL)
         return false;
-    
+
     deleteRoute(map->routes[routeId]);
     map->routes[routeId] = NULL;
     return true;

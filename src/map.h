@@ -142,7 +142,7 @@ bool removeRoad(Map *map, const char *city1, const char *city2);
  */
 char const* getRouteDescription(Map *map, unsigned routeId);
 
-/** @brief Tworzy drogę krajową
+/** @brief Tworzy drogę krajową.
  * Tworzy nową drogę krajową na podstawie opisu, dodając brakujące
  * odcinki. O ile numer drogi jest prawidłowy i taka droga jeszcze nie istnieje,
  * tworzy nową na podstawie opisu w formacie takim, jak w getRouteDescripion
@@ -158,7 +158,7 @@ char const* getRouteDescription(Map *map, unsigned routeId);
  */
 bool makeANewRoute(Map *map, unsigned no, char *descr);
 
-/** @brief Usuwa drogę krajową
+/** @brief Usuwa drogę krajową.
  * Jeżeli droga krajowa istnieje, usuwa ją z mapy.
  * @param[in,out] map       – wskaźnik na strukturę przechowującą mapę dróg;
  * @param[in] routeId       – numer drogi krajowej.

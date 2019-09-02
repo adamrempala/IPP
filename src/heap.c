@@ -11,7 +11,7 @@
 
 /***FUNKCJA POMOCNICZA***/
 
-/** @brief Usuwa cały podstóg
+/** @brief Usuwa cały podstóg.
  * Usuwa cały podstóg ze wszystkimi przyporządkowanymi elementami, w tym
  * konstrukcjami drogi.
  * @param[in] elem – wskaźnik na element na szczycie podstogu
@@ -40,22 +40,22 @@ void deleteHeapEl(HeapEl elem) {
 bool bigger(HeapCard card1, HeapCard card2) {
     if (card1 != NULL && card2 == NULL)
         return false;
-    
+
     if (card1 == NULL && card2 != NULL)
         return true;
-    
+
     if (card1 == NULL && card2 == NULL)
         return false;
-    
+
     if (card1->dist > card2->dist)
         return true;
-    
+
     if (card1->dist < card2->dist)
         return false;
-    
+
     if (card1->year < card2->year)
         return true;
-    
+
     return false;
 }
 
@@ -72,22 +72,22 @@ bool bigger(HeapCard card1, HeapCard card2) {
 bool smaller(HeapCard card1, HeapCard card2) {
     if (card1 != NULL && card2 == NULL)
         return true;
-    
+
     if (card1 == NULL && card2 != NULL)
         return false;
-    
+
     if (card1 == NULL && card2 == NULL)
         return false;
-    
+
     if (card1->dist < card2->dist)
         return true;
-    
+
     if (card1->dist > card2->dist)
         return false;
-    
+
     if (card1->year > card2->year)
         return true;
-    
+
     return false;
 }
 
@@ -106,13 +106,13 @@ HeapCard newCard(const char *last, Route route,
                  unsigned int lengthSum, int oldestYr) {
     HeapCard newCard = NULL;
     newCard = (HeapCard)malloc(sizeof(struct VisitCard));
-    
+
     if (newCard == NULL)
         return newCard;
-    
+
     newCard->lastCity = NULL;
     newCard->lastCity = strdup(last);
-    
+
     if (newCard->lastCity == NULL) {
         free(newCard);
         newCard = NULL;
@@ -120,14 +120,14 @@ HeapCard newCard(const char *last, Route route,
     }
 
     newCard->construction = route;
-    
+
     if (newCard->construction == NULL) {
         free(newCard->lastCity);
         free(newCard);
         newCard = NULL;
         return newCard;
     }
-    
+
     newCard->dist = lengthSum;
     newCard->year = oldestYr;
     return newCard;
@@ -171,10 +171,10 @@ char *getLastCity(HeapCard card) {
 Heap newHeap() {
     Heap heap = NULL;
     heap = (Heap)malloc(sizeof(struct Priqueue));
-    
+
     if (heap == NULL)
         return heap;
-    
+
     heap->first = NULL;
     return heap;
 }
@@ -186,7 +186,7 @@ Heap newHeap() {
 unsigned getSize(HeapEl elem) {
     if (elem == NULL)
         return 0;
-    
+
     return elem->size;
 }
 
@@ -198,10 +198,10 @@ unsigned getSize(HeapEl elem) {
 HeapCard getMax(Heap heap) {
     if (heap == NULL)
         return NULL;
-    
+
     if (heap->first == NULL)
         return NULL;
-    
+
     return heap->first->routeCard;
 }
 
@@ -218,12 +218,12 @@ bool put(HeapEl *elem, HeapCard card) {
     //jeśli pod wskazanym adresem nie ma nic, wrzucamy do niego naszą strukturę
     if (*elem == NULL) {
         HeapEl newHeapEl = (HeapEl)malloc(sizeof(struct PriQueueEl));
-        
+
         if (newHeapEl == NULL) {
             deleteCard(card);
             return false;
         }
-        
+
         newHeapEl->routeCard = card;
         newHeapEl->l = NULL;
         newHeapEl->r = NULL;
@@ -233,7 +233,7 @@ bool put(HeapEl *elem, HeapCard card) {
     }
     else {
         HeapEl *hl = &(*elem)->l, *hr = &(*elem)->r;
-        
+
         // dążymy do tego, by stóg był zbalansowany
         if (getSize(*hl) <= getSize(*hr)) {
             // zamiana, jeśli wrzucany element jest lepszy
@@ -242,11 +242,11 @@ bool put(HeapEl *elem, HeapCard card) {
                 (*elem)->routeCard = card;
                 card = tmp;
             }
-            
+
             (*elem)->size++;
             if (!put(hl, card))
                 return false;
-            
+
             return true;
         }
         else {
@@ -256,19 +256,19 @@ bool put(HeapEl *elem, HeapCard card) {
                 (*elem)->routeCard = card;
                 card = tmp;
             }
-            
+
             (*elem)->size++;
-            
+
             // rekurencyjnie robi dalej
             if (!put(hr, card))
                 return false;
-            
+
             return true;
         }
     }
 }
 
-/** @brief Usuwa element ze szczytu (pod)stogu
+/** @brief Usuwa element ze szczytu (pod)stogu.
  * Jest to funkcja rekurencyjna, która usuwa element ze szczytu (pod)stogu
  * i dokonuje korekt, żeby każdy ojciec miał konstruowaną drogę krótszą
  * lub równą i niestarszą od synów. Co ważne, nie czyści ona samego elementu
@@ -279,7 +279,7 @@ bool put(HeapEl *elem, HeapCard card) {
 void removeMax(HeapEl *elem) {
     if (*elem != NULL) {
         (*elem)->size--;
-        
+
         if ((*elem)->l == NULL && (*elem)->r == NULL) {
             free((*elem));
             *elem = NULL;
@@ -300,7 +300,7 @@ void removeMax(HeapEl *elem) {
             // odwrotnie analogicznie do put, wyciągamy do góry
             // element w większego podstogu
             HeapEl *hl = &(*elem)->l, *hr = &(*elem)->r;
-            
+
             if (!bigger((*hl)->routeCard, (*hr)->routeCard)) {
                 (*elem)->routeCard = (*hl)->routeCard;
                 removeMax(hl);
@@ -313,7 +313,7 @@ void removeMax(HeapEl *elem) {
     }
 }
 
-/** @brief Usuwa cały stóg
+/** @brief Usuwa cały stóg.
  * Usuwa cały stóg ze wszystkimi przyporządkowanymi elementami,
  * w tym konstrukcjami drogi.
  * @param[in] heap – wskaźnik na stóg

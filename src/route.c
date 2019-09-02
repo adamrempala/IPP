@@ -9,7 +9,7 @@
 #include "htab.h"
 #include "route.h"
 
-/** @brief Zwraca liczbę nieujemną
+/** @brief Zwraca liczbę nieujemną.
  * Jeśli liczba nie jest typu unsigned, zwraca 0; w przeciwnym wypadku zwraca
  * wartość odpowiadającą napisowi symbolizujacemu liczbę.
  * @param[in] numberText    – wskaźnik na napis symbolizujący liczbę
@@ -20,21 +20,21 @@ unsigned correctUnsigned(char *numberText) {
     //zmienna informuje nas, czy musimy się obawiać przekroczenia
     //wartości maksymalnej, jeśli liczba ma 10 cyfr
     bool noOverflow = false;
-    
+
     //pomijamy zera wiodące
     while (*numberText == '0')
         numberText++;
-    
+
     unsigned sigma = 0;
     char max[10] = "4294967295";
-    
+
     if (strlen(numberText) > 10)
         return 0;
     else if (strlen(numberText) < 10) {
         for (unsigned i = 0; i < strlen(numberText); i++) {
             if (numberText[i] < 48 || numberText[i] > 57)
                 return 0;
-            
+
             sigma = 10 * sigma - 48 + numberText[i];
         }
         return sigma;
@@ -43,9 +43,9 @@ unsigned correctUnsigned(char *numberText) {
         for (int i = 0; i < 10; i++) {
             if ((numberText[i] < 48 || numberText[i] > max[i]) && !noOverflow)
                 return 0;
-            
+
             sigma = 10 * sigma - 48 + numberText[i];
-            
+
             if (numberText[i] < max[i])
                 noOverflow = true;
         }
@@ -53,7 +53,7 @@ unsigned correctUnsigned(char *numberText) {
     }
 }
 
-/** @brief Zwraca liczbę całkowitą (rok)
+/** @brief Zwraca liczbę całkowitą (rok).
  * Jeśli liczba nie jest typu int, zwraca 0; w przeciwnym wypadku zwraca wartość
  * odpowiadającą napisowi symbolizujacemu liczbę.
  * @param[in] numberText    – wskaźnik na napis symbolizujący liczbę
@@ -65,55 +65,55 @@ int iYear(char *numberText) {
     //należy rozważyć dwa przypadki
     bool noOverflow = false;
     bool isPositive = true;
-    
+
     if (*numberText == '-') {
         isPositive = false;
         numberText++;
     }
-    
+
     while (*numberText == '0')
         numberText++;
-    
+
     long long sigma = 0;
     char maxPositive[10] = "2147483647", maxNegative[10] = "2147483648";
-    
+
     if (strlen(numberText) > 10)
         return 0;
     else if (strlen(numberText) < 10) {
         for (size_t i = 0; i < strlen(numberText); i++) {
             if (numberText[i] < 48 || numberText[i] > 57)
                 return 0;
-            
+
             sigma = 10 * sigma - 48 + numberText[i];
         }
         if (!isPositive)
             return (int)-sigma;
-        
+
         return (int)sigma;
     }
     else if (isPositive){
         for (int i = 0; i < 10; i++) {
             if ((numberText[i] < 48 || numberText[i] > maxPositive[i]) && !noOverflow)
                 return 0;
-            
+
             sigma = 10 * sigma - 48 + numberText[i];
-            
+
             if (numberText[i] < maxPositive[i]) noOverflow = true;
         }
-        
+
         return (int)sigma;
     }
     else {
         for (int i = 0; i < 10; i++) {
             if ((numberText[i] < 48 || numberText[i] > maxNegative[i]) && !noOverflow)
                 return 0;
-            
+
             sigma = 10 * sigma - 48 + numberText[i];
-            
+
             if (numberText[i] < maxNegative[i])
                 noOverflow = true;
         }
-        
+
         if (sigma > 0)
             return (int)-sigma;
         else return (int)sigma;
@@ -126,18 +126,18 @@ int iYear(char *numberText) {
  */
 int numberLength(long long x) {
     int length = 0;
-    
+
     //przypadek liczby ujemnej
     if (x < 0) {
         length++;
         x = -x;
     }
-    
+
     while (x > 0) {
         length++;
         x /= 10;
     }
-    
+
     return length;
 }
 
@@ -149,24 +149,24 @@ char *numberToChar(long long x) {
     int l = numberLength(x) + 1;
     char *str;
     str = malloc(l);
-    
+
     if (str == NULL)
         return NULL;
-    
+
     int i = l - 1;
     str[i] = '\0';
-    
+
     if (x < 0) {
         str[0] = '-';
         x = -x;
     }
-    
+
     while (x > 0) {
         i--;
         str[i] = x % 10 + '0';
         x /= 10;
     }
-    
+
     return str;
 }
 
@@ -180,17 +180,17 @@ char *numberToChar(long long x) {
 Route startRoute(const char* name) {
     Route r = NULL;
     r = (Route)malloc(sizeof(struct Path));
-    
+
     if (r == NULL)
         return r;
-    
+
     r->first = newStop(name);
-    
+
     if (r->first == NULL) {
         free(r);
         return r;
     }
-    
+
     r->last = r->first;
     return r;
 }
@@ -205,19 +205,19 @@ Route startRoute(const char* name) {
 Stop newStop(const char* name) {
     Stop s = NULL;
     s = (Stop)malloc(sizeof(struct RouteCity));
-    
+
     if (s == NULL)
         return s;
-    
+
     s->name = strdup(name);
     s->left = NULL;
     s->right = NULL;
-    
+
     if (s->name == NULL) {
         free(s);
         return NULL;
     }
-    
+
     return s;
 }
 
@@ -232,10 +232,10 @@ Stop newStop(const char* name) {
 Stop findStop(Stop s, const char *cityName) {
     if (s == NULL)
         return s;
-    
+
     if (!strcmp(s->name, cityName))
         return s;
-    
+
     return findStop(s->right, cityName);
 }
 
@@ -260,10 +260,10 @@ void deleteLoneStop(Stop s) {
 bool addRight(Route r, const char *cityName) {
 
     Stop s = newStop(cityName);
-    
+
     if (s == NULL)
         return false;
-    
+
     r->last->right = s;
     s->left = r->last;
     r->last = s;
@@ -294,10 +294,10 @@ void deleteRight(Route r) {
  */
 bool addLeft(Route r, const char *cityName) {
     Stop s = newStop(cityName);
-    
+
     if (s == NULL)
         return false;
-    
+
     r->first->left = s;
     s->right = r->first;
     r->first = s;
@@ -353,10 +353,10 @@ void deleteRoute(Route r) {
 bool searcherForIsPart(Stop s, const char *city) {
     if (s == NULL)
         return false;
-    
+
     if (!strcmp(city, s->name))
         return true;
-    
+
     return searcherForIsPart(s->right, city);
 }
 
@@ -371,7 +371,7 @@ bool searcherForIsPart(Stop s, const char *city) {
 bool isPart(Route r, const char *city) {
     if (r == NULL)
         return false;
-    
+
     return searcherForIsPart(r->first, city);
 }
 
@@ -387,14 +387,14 @@ bool isPart(Route r, const char *city) {
 Route merge2Routes(Route r1, Route r2) {
     if (strcmp(r1->last->name, r2->first->name))
         return NULL;
-    
+
     Stop p = r2->first->right;
     r1->last->right = p;
     p->left = r1->last;
     free(r2->first->name);
     free(r2->first);
     r1->last = r2->last;
-    
+
     //r2 zostaje zwolnione. Nie wolno już się do niego odwoływać
     free(r2);
     return r1;
@@ -464,17 +464,17 @@ Route replaceRoute(Route r1, Route overwriting, const char *city) {
 bool existsPath(Stop s, const char *first, const char *second) {
     if (s == NULL)
         return false;
-    
+
     if (!strcmp(first, s->name)) {
         if (s->right == NULL)
             return false;
-        
+
         if (!strcmp(second, s->right->name))
             return true;
-            
+
         return false;
     }
-    
+
     return existsPath(s->right, first, second);
 }
 
@@ -487,7 +487,7 @@ bool existsPath(Stop s, const char *first, const char *second) {
 bool isBeginningOrEnd(Route r, const char *city) {
     if (r == NULL)
         return false;
-    
+
     else
         return (!strcmp(r->first->name, city) || !strcmp(r->last->name, city));
 
@@ -501,16 +501,16 @@ bool isBeginningOrEnd(Route r, const char *city) {
 bool singleRoad(Route r) {
     if (r == NULL)
         return true;
-    
+
     if (r->first == NULL)
         return true;
-    
+
     if (r->first->right == NULL)
         return true;
-    
+
     if (r->first->right->right == NULL)
         return true;
-    
+
     return false;
 }
 
@@ -523,21 +523,21 @@ bool singleRoad(Route r) {
 Route copyRoute(Route r) {
     Stop s = r->first;
     Route copy = startRoute(s->name);
-    
+
     if (copy == NULL)
         return NULL;
-    
+
     s = s->right;
-    
+
     while (s != NULL) {
         if (!addRight(copy, s->name)) {
             deleteRoute(copy);
             return NULL;
         }
-        
+
         s = s->right;
     }
-    
+
     return copy;
 }
 
@@ -550,12 +550,12 @@ Route copyRoute(Route r) {
 Route revRoute(Route r) {
     Stop s = r->first;
     Route rev = startRoute(s->name);
-    
+
     if (rev == NULL)
         return NULL;
-    
+
     s = s->right;
-    
+
     while (s != NULL) {
         if (!addLeft(rev, s->name)) {
             deleteRoute(rev);
@@ -563,6 +563,6 @@ Route revRoute(Route r) {
         }
         s = s->right;
     }
-    
+
     return rev;
 }

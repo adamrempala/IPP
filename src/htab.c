@@ -12,12 +12,12 @@
 #include "prime.h"
 
 /**
- * Początkowy rozmiar tablicy haszującej
+ * Początkowy rozmiar tablicy haszującej.
  */
 #define BASE 67
 
 /**
- * Liczba, za pomocą której haszujemy
+ * Liczba, za pomocą której haszujemy.
  */
 #define HASHPRIME 241
 
@@ -39,17 +39,17 @@ static struct HashItem DELETED = {NULL, NULL};
 static Term newItem(const char *key, Cities value) {
     Term term = NULL;
     term = (Term)malloc(sizeof(struct HashItem));
-    
+
     if (term == NULL)
         return NULL;
-    
+
     term->key = strdup(key);
-    
+
     if (term->key == NULL) {
         free(term);
         return NULL;
     }
-    
+
     term->value = value;
     return term;
 }
@@ -64,23 +64,23 @@ static Term newItem(const char *key, Cities value) {
 static Hash newHashSized(const int base) {
     Hash table = NULL;
     table = (Hash)malloc(sizeof(struct Hashtable));
-    
+
     if (table == NULL)
         return table;
-    
+
     table->base = base;
     table->size = nextPrime(table->base);
     table->numberOfElements = 0;
     table->items = (Term*)calloc((size_t)table->size, sizeof(struct HashItem*));
-    
+
     if (table->items == NULL) {
         free(table);
         return NULL;
     }
-    
+
     for (size_t i = 0; i < table->size; i++)
         table->items[i] = NULL;
-    
+
     return table;
 }
 
@@ -92,10 +92,10 @@ static Hash newHashSized(const int base) {
 static void deleteItem(Term term) {
     if (term->key != NULL)
         free(term->key);
-    
+
     if (term->value != NULL)
         deleteList(term->value);
-    
+
     free(term);
 }
 
@@ -108,7 +108,7 @@ static void deleteItem(Term term) {
 static void deleteItemButNotCities(Term term) {
     if (term->key != NULL)
         free(term->key);
-    
+
     free(term);
 }
 
@@ -122,7 +122,7 @@ static void deleteItemButNotCities(Term term) {
 void deleteTableButNotCities(Hash table) {
     for (unsigned i = 0; i < table->size; i++) {
         Term item = table->items[i];
-        
+
         if (item != NULL) {
             deleteItemButNotCities(item);
             table->items[i] = NULL;
@@ -146,10 +146,10 @@ static bool resizeHash(Hash table, const int base) {
         return true;
     }
     Hash nova = newHashSized(base);
-    
+
     if (nova == NULL)
         return false;
-    
+
     for (unsigned i = 0; i < table->size; i++) {
         Term item = table->items[i];
         if (item != NULL && item != &DELETED) {
@@ -165,16 +165,16 @@ static bool resizeHash(Hash table, const int base) {
     const int tmpInt = table->size;
     table->size = nova->size;
     nova->size = tmpInt;
-    
+
     Term* tmpItem = table->items;
     table->items = nova->items;
     nova->items = tmpItem;
-    
+
     deleteTableButNotCities(nova);
     return true;
 }
 
-/** @brief Funkcja haszująca
+/** @brief Funkcja haszująca.
  * @param[in] key – wskaźnik na klucz.
  * @param[in] p – liczba pierwsza.
  * @param[in] maxElem – maksymalna liczba elementów haszmapy.
@@ -186,17 +186,17 @@ static int hasher(const char *key, const int p, const int maxElem) {
     size_t keyLength = strlen(key);
     for (size_t i = 0; i < keyLength; i++) {
         int uChar = (int)key[i];
-        
+
         if (uChar < 0)
             uChar += 256;
-        
+
         hash += (long long)pow(p, keyLength - (i + 1)) * uChar;
         hash = hash % maxElem;
     }
     return (int)hash;
 }
 
-/** @brief Funkcja ustalająca indeks w haszmapie
+/** @brief Funkcja ustalająca indeks w haszmapie.
  * @param[in] key       – wskaźnik na klucz.
  * @param[in] hashers   – maksymalna liczba elementów hashmapy.
  * @return Potencjalny indeks w hashmapie.
@@ -223,7 +223,7 @@ Hash newTable() {
 void deleteTable(Hash table) {
     for (unsigned i = 0; i < table->size; i++) {
         Term item = table->items[i];
-        
+
         if (item != NULL) {
             deleteItem(item);
         }
@@ -246,26 +246,26 @@ bool insertHash(Hash table, const char *key, Cities value) {
             return false;
     }
     Term item = newItem(key, value);
-    
+
     if (item == NULL)
         return false;
-    
+
     int index = getHash(item->key, table->size);
     Term actual = table->items[index];
-    
+
     while (actual != NULL && actual != &DELETED) {
         // gdy miejsce jest zajęte, przechodzimy do następnego
         index = (index + 1) % table->size;
         actual = table->items[index];
     }
-    
+
     table->items[index] = item;
     table->numberOfElements++;
     return true;
 }
 
 
-/** @brief Wyszukiwanie listy połączeń
+/** @brief Wyszukiwanie listy połączeń.
  * Na podstawie klucza szuka w hashmapie listy połączeń z danym miastem.
  * @param[in] table – wskaźnik na hashmapę.
  * @param[in] key       – wskaźnik na klucz (miasto).

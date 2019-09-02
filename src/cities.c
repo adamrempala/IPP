@@ -16,15 +16,15 @@
 Cities newList() {
     Cities cityList = NULL;
     cityList = (Cities)malloc(sizeof(struct CityList));
-    
+
     if (cityList == NULL)
         return NULL;
-    
+
     cityList->first = NULL;
     return cityList;
 }
 
-/** @brief Usuwa elementy listy
+/** @brief Usuwa elementy listy.
  * Usuwa element listy i, rekurencyjnie, wszystkie następne.
  * @param[in] cityElt    – wskaźnik na element listy
  */
@@ -36,7 +36,7 @@ void deleteListCities(CityNext cityElt) {
     }
 }
 
-/** @brief Usuwa listę
+/** @brief Usuwa listę.
  * Usuwa wszystko, co jest związane ze wskazaną listą.
  * @param[in] cityList    – wskaźnik na listę
  */
@@ -44,12 +44,12 @@ void deleteList(Cities cityList) {
     if (cityList != NULL) {
         if (cityList->first != NULL)
             deleteListCities(cityList->first);
-        
+
         free(cityList);
     }
 }
 
-/** @brief Szukanie połączenia
+/** @brief Szukanie połączenia.
  * Na podstawie nazwy miasta szuka połączenia we wszystkich elementach listy,
  * począwszy od wskazanego.
  * @param[in] cityElt   – wskaźnik na element listy
@@ -60,14 +60,14 @@ void deleteList(Cities cityList) {
 CityNext findElt(CityNext cityElt, const char *city) {
     if (cityElt == NULL)
         return cityElt;
-    
+
     if (!strcmp(cityElt->cityName, city))
         return cityElt;
-    
+
     return findElt(cityElt->next, city);
 }
 
-/** @brief Sprawdzanie, czy połączenie istnieje
+/** @brief Sprawdzanie, czy połączenie istnieje.
  * Na podstawie nazwy miasta sprawdza, czy na liście, począwszy od podanego
  * elementu, istnieje połączenie do danego miasta.
  * @param[in] cityElt     – wskaźnik na element listy
@@ -77,14 +77,14 @@ CityNext findElt(CityNext cityElt, const char *city) {
 bool contains(CityNext cityElt, const char *city) {
     if (cityElt == NULL)
         return false;
-    
+
     if (!strcmp(cityElt->cityName, city))
         return true;
-    
+
     return contains(cityElt->next, city);
 }
 
-/** @brief Dodanie połączenia do listy
+/** @brief Dodanie połączenia do listy.
  * Dodaje na początek listy połączenie.
  * @param[in,out] cityList  – wskaźnik na listę
  * @param[in] cityName      – wskaźnik na nazwę miasta, do którego prowadzi nowy odcinek
@@ -99,17 +99,17 @@ bool addCity(Cities cityList, const char *cityName, unsigned length, int year) {
     else {
         CityNext newCityElt = NULL;
         newCityElt = (CityNext)malloc(sizeof(struct CityElts));
-        
+
         if (newCityElt == NULL)
             return false;
-        
+
         newCityElt->cityName = strdup(cityName);
-        
+
         if (newCityElt->cityName == NULL) {
             free(newCityElt);
             return false;
         }
-        
+
         newCityElt->length = length;
         newCityElt->year = year;
         newCityElt->next = cityList->first;
@@ -118,7 +118,7 @@ bool addCity(Cities cityList, const char *cityName, unsigned length, int year) {
     }
 }
 
-/** @brief Usuwa połączenie z listy
+/** @brief Usuwa połączenie z listy.
  * Usuwa z listy wskaźnik na połączenie, chyba że dany nie istnieje.
  * @param[in,out] cityList  – wskaźnik na listę.
  * @param[in] cityName      – wskaźnik na nazwę miasta, do którego prowadzi odcinek.
@@ -131,10 +131,10 @@ bool deleteCity(Cities cityList, const char *cityName) {
     CityNext previous, current;
     current = cityList->first;
     previous = cityList->first;
-    
+
     if (current == NULL)
         return false;
-    
+
     // przypadek, gdy usuwany element jest na początku listy
     if (!strcmp((current)->cityName, cityName)) {
         cityList->first = current->next;
@@ -145,9 +145,9 @@ bool deleteCity(Cities cityList, const char *cityName) {
     // przeciwny przypadek
     else {
         current = current->next;
-        
+
         // pętla szukająca usuwanego elementu
-        while (current != NULL) {	
+        while (current != NULL) {
             if (!strcmp((current)->cityName, cityName)) {
                 // usunięcie znalezionego połączenia
                 previous->next = current->next;
@@ -158,12 +158,12 @@ bool deleteCity(Cities cityList, const char *cityName) {
             previous = current;
             current = current->next;
         }
-        
+
         return false;
     }
 }
 
-/** @brief Długość odcinka
+/** @brief Długość odcinka.
  * Podaje informację o długości odcinka lub 0, jeśli odcinek nie istnieje.
  * @param[in,out] cityList     – wskaźnik na listę
  * @param[in] city             – wskaźnik na nazwę miasta, do którego prowadzi odcinek
@@ -172,14 +172,14 @@ bool deleteCity(Cities cityList, const char *cityName) {
  */
 unsigned getLength(Cities cityList, const char *city) {
     CityNext cityElt = findElt(cityList->first, city);
-    
+
     if (cityElt == NULL)
         return 0;
-    
+
     return cityElt->length;
 }
 
-/** @brief Rok ostatniego remontu odcinka
+/** @brief Rok ostatniego remontu odcinka.
  * Podaje informację o roku ostatniego remontu lub budowy odcinka lub
  * zwraca 0, jeśli odcinek nie istnieje.
  * @param[in,out] cityList     – wskaźnik na listę
@@ -189,10 +189,10 @@ unsigned getLength(Cities cityList, const char *city) {
  */
 int getYear(Cities cityList, const char *city) {
     CityNext cityElt = findElt(cityList->first, city);
-    
+
     if (cityElt == NULL)
         return 0;
-    
+
     return cityElt->year;
 }
 

@@ -41,7 +41,7 @@ struct Path {
  */
 typedef struct Path* Route;
 
-/** @brief Zwraca liczbę nieujemną
+/** @brief Zwraca liczbę nieujemną.
  * Jeśli liczba nie jest typu unsigned, zwraca 0; w przeciwnym wypadku zwraca
  * wartość odpowiadającą napisowi symbolizujacemu liczbę.
  * @param[in] numberText    – wskaźnik na napis symbolizujący liczbę
@@ -49,7 +49,7 @@ typedef struct Path* Route;
  */
 unsigned correctUnsigned(char *numberText);
 
-/** @brief Zwraca liczbę całkowitą (rok)
+/** @brief Zwraca liczbę całkowitą (rok).
  * Jeśli liczba nie jest typu int, zwraca 0; w przeciwnym wypadku zwraca wartość
  * odpowiadającą napisowi symbolizujacemu liczbę.
  * @param[in] numberText    – wskaźnik na napis symbolizujący liczbę

@@ -61,7 +61,7 @@ struct Priqueue {
 };
 
 /**
- * Wskaźnik na strukturę Priqueue
+ * Wskaźnik na strukturę Priqueue.
  */
 typedef struct Priqueue* Heap;
 
@@ -155,7 +155,7 @@ HeapCard getMax(Heap heap);
  */
 bool put(HeapEl *elem, HeapCard card);
 
-/** @brief Usuwa element ze szczytu (pod)stogu
+/** @brief Usuwa element ze szczytu (pod)stogu.
  * Jest to funkcja rekurencyjna, która usuwa element ze szczytu (pod)stogu
  * i dokonuje korekt, żeby każdy ojciec miał konstruowaną drogę krótszą
  * lub równą i niestarszą od synów. Co ważne, nie czyści ona samego elementu
@@ -165,7 +165,7 @@ bool put(HeapEl *elem, HeapCard card);
  */
 void removeMax(HeapEl *elem);
 
-/** @brief Usuwa cały stóg
+/** @brief Usuwa cały stóg.
  * Usuwa cały stóg ze wszystkimi przyporządkowanymi elementami,
  * w tym konstrukcjami drogi.
  * @param[in] heap – wskaźnik na stóg

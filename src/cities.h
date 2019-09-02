@@ -52,13 +52,13 @@ typedef struct CityList* Cities;
  */
 Cities newList();
 
-/** @brief Usuwa listę
+/** @brief Usuwa listę.
  * Usuwa wszystko, co jest związane ze wskazaną listą.
  * @param[in] cityList    – wskaźnik na listę
  */
 void deleteList(Cities cityList);
 
-/** @brief Szukanie połączenia
+/** @brief Szukanie połączenia.
  * Na podstawie nazwy miasta szuka połączenia we wszystkich elementach listy,
  * począwszy od wskazanego.
  * @param[in] cityElt   – wskaźnik na element listy
@@ -68,7 +68,7 @@ void deleteList(Cities cityList);
  */
 CityNext findElt(CityNext cityElt, const char *city);
 
-/** @brief Sprawdzanie, czy połączenie istnieje
+/** @brief Sprawdzanie, czy połączenie istnieje.
  * Na podstawie nazwy miasta sprawdza, czy na liście, począwszy od podanego
  * elementu, istnieje połączenie do danego miasta.
  * @param[in] cityElt     – wskaźnik na element listy
@@ -77,7 +77,7 @@ CityNext findElt(CityNext cityElt, const char *city);
  */
 bool contains(CityNext cityElt, const char *city);
 
-/** @brief Dodanie połączenia do listy
+/** @brief Dodanie połączenia do listy.
  * Dodaje na początek listy połączenie.
  * @param[in,out] cityList  – wskaźnik na listę
  * @param[in] cityName      – wskaźnik na nazwę miasta, do którego prowadzi nowy odcinek
@@ -88,7 +88,7 @@ bool contains(CityNext cityElt, const char *city);
  */
 bool addCity(Cities cityList, const char *cityName, unsigned length, int year);
 
-/** @brief Usuwa połączenie z listy
+/** @brief Usuwa połączenie z listy.
  * Usuwa z listy wskaźnik na połączenie, chyba że dany nie istnieje.
  * @param[in,out] cityList  – wskaźnik na listę.
  * @param[in] cityName      – wskaźnik na nazwę miasta, do którego prowadzi odcinek.
@@ -97,7 +97,7 @@ bool addCity(Cities cityList, const char *cityName, unsigned length, int year);
  */
 bool deleteCity(Cities cityList, const char *cityName);
 
-/** @brief Długość odcinka
+/** @brief Długość odcinka.
  * Podaje informację o długości odcinka lub 0, jeśli odcinek nie istnieje.
  * @param[in,out] cityList     – wskaźnik na listę
  * @param[in] city             – wskaźnik na nazwę miasta, do którego prowadzi odcinek
@@ -106,7 +106,7 @@ bool deleteCity(Cities cityList, const char *cityName);
  */
 unsigned getLength(Cities cityList, const char *city);
 
-/** @brief Rok ostatniego remontu odcinka
+/** @brief Rok ostatniego remontu odcinka.
  * Podaje informację o roku ostatniego remontu lub budowy odcinka lub
  * zwraca 0, jeśli odcinek nie istnieje.
  * @param[in,out] cityList     – wskaźnik na listę

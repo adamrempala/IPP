@@ -13,7 +13,7 @@
 
 /***FUNKCJE POMOCNICZE***/
 
-/** @brief Ustala optymalnego kandydata
+/** @brief Ustala optymalnego kandydata.
  * W pojedynku biorą udział dwie konstrukcje – mistrz i pretendent. Lepszy
  * kandydat zostaje mistrzem, gorszy jest usuwany. W przypadku remisu
  * usuwany jest pretendent, a fakt, że mistrz nie wygrał ze wszystkimi,
@@ -40,7 +40,7 @@ void duel(HeapCard pretendent, HeapCard *best, bool *absolute) {
     }
 }
 
-/** @brief Tworzy nową strukturę i wrzuca na stóg
+/** @brief Tworzy nową strukturę i wrzuca na stóg.
  * Na podstawie opisu rozszerzenia tworzy nową strukturę konstrukcji
  * drogi krajowej i wrzuca ją na stóg.
  * @param[in] current       – wskaźnik na strukturę konstrukcji
@@ -54,38 +54,38 @@ bool pushExtended(HeapCard current, CityNext iter, HeapCard card,
              Heap heap) {
     // oldestYear będzie wartością najstarszego odcinka konstrukcji
     int oldestYear = current->year;
-    
+
     // która może być zaktualizowana
     if (oldestYear > iter->year || oldestYear == 0)
         oldestYear = iter->year;
-    
+
     // kopiowanie i rozszerzenie konstrukcji drogi krajowej
     Route extended = copyRoute(current->construction);
-    
+
     if (extended == NULL)
         return false;
-    
+
     if (!addRight(extended, iter->cityName)) {
         deleteRoute(extended);
         return false;
     }
-    
+
     // utworzenie nowej struktury konstrukcji i wrzucenie jej na stóg
     card = newCard(iter->cityName, extended,
                    current->dist + iter->length, oldestYear);
-    
+
     if (card == NULL)
         return false;
-    
+
     if (!put(&(heap->first), card)) {
         deleteCard(card);
         return false;
     }
-    
+
     return true;
 }
 
-/** @brief Wyjście z Dijkstry
+/** @brief Wyjście z Dijkstry.
  * Usuwa wszystkie dane utworzone przez funkcję i zwraca NULL.
  * @param[in] c1    – wskaźnik na strukturę konstrukcji
  * @param[in] c2    – wskaźnik na strukturę konstrukcji
@@ -112,7 +112,7 @@ HeapCard dijDeleter(HeapCard c1, HeapCard c2, Heap h, Cities v) {
 bool sameCity(const char *city1, const char *city2) {
     if(!strcmp(city1, city2))
         return true;
-    
+
     return false;
 }
 
@@ -131,29 +131,29 @@ bool sameCity(const char *city1, const char *city2) {
 HeapCard doubleDijkstra(Hash hash, const char *city1, Route forbidden) {
     bool absolute = false; // czy najlepszy wynik jest bezwzględnie najlepszy
     Heap heap = newHeap();
-    
+
     if (heap == NULL)
         return NULL;
-    
+
     HeapCard card = NULL, best = NULL;
     card = newCard(city1, startRoute(city1), 0, 0); // wyjście Dijkstry
-    
+
     if (card == NULL)
         return dijDeleter(NULL, NULL, heap, NULL);
-    
+
     Cities visited = newList();
-    
+
     if (visited == NULL)
         return dijDeleter(NULL, card, heap, NULL);
-    
+
     if (!put(&(heap->first), card))
         return dijDeleter(NULL, NULL, heap, visited);
-    
+
     while (getMax(heap) != NULL) {
         HeapCard current = getMax(heap); // element wzięty ze szczytu stogu
         removeMax(&heap->first);
         char *currentName = getLastCity(current);
-        
+
         if (currentName == NULL)
             return dijDeleter(NULL, current, heap, visited);
         /*
@@ -171,18 +171,18 @@ HeapCard doubleDijkstra(Hash hash, const char *city1, Route forbidden) {
             addCity(visited, currentName, 0, 0);
             //bierze listę połączeń z hashmapy
             Cities linkList = searchHash(hash, currentName);
-            
+
             if (linkList != NULL) {
                 CityNext iterLinkedCity = linkList->first;
-                
+
                 // dla każdego połączenia
                 while (iterLinkedCity != NULL) {
                     HeapCard card = NULL;
-                    
+
                     // wrzucamy zaktualizowaną konstrukcję na stóg
                     if (!pushExtended(current, iterLinkedCity, card, heap))
                         return dijDeleter(best, current, heap, visited);
-                    
+
                     iterLinkedCity = iterLinkedCity->next;
                 }
             }
@@ -193,7 +193,7 @@ HeapCard doubleDijkstra(Hash hash, const char *city1, Route forbidden) {
 
     deleteList(visited);
     deleteHeap(heap);
-    
+
     // sprawdzamy, czy najlepszy wariant ustalony jest jednoznacznie
     if (!absolute) {
         deleteCard(best);
@@ -223,34 +223,34 @@ HeapCard dijkstra(Hash hash, const char *city1, const char *city2,
              Route forbidden, bool rmRoad) {
     bool absolute = false; // czy najlepszy wynik jest bezwzględnie najlepszy
     Heap heap = newHeap();
-    
+
     if (heap == NULL)
         return NULL;
-    
+
     HeapCard card = NULL, best = NULL;
     card = newCard(city1, startRoute(city1), 0, 0); // wyjście Dijkstry
-    
+
     if (card == NULL)
         return dijDeleter(NULL, NULL, heap, NULL);
-    
+
     Cities visited = NULL;
     visited = newList();
-    
+
     if (visited == NULL)
         return dijDeleter(NULL, card, heap, NULL);
-    
+
     if (!put(&(heap->first), card))
         return dijDeleter(NULL, NULL, heap, visited);
-    
+
     while (getMax(heap) != NULL) {
         HeapCard current = getMax(heap); // element wzięty ze szczytu stogu
         removeMax(&heap->first);
         char *currentName = NULL;
         currentName = getLastCity(current);
-        
+
         if (currentName == NULL)
             return dijDeleter(NULL, current, heap, visited);
-        
+
         /*
          * W przypadku gdy koncem odcinka jest szukane miasto,
          * sprawdzamy, czy droga kraj. jest optymalna. Jesli nie zachodza
@@ -262,23 +262,23 @@ HeapCard dijkstra(Hash hash, const char *city1, const char *city2,
         if (sameCity(currentName, city2))
             duel(current, &best, &absolute);
         else if (!contains(visited->first, currentName)
-                && ((sameCity(currentName, city1)) 
+                && ((sameCity(currentName, city1))
                 || !isPart(forbidden, currentName))) {
             //od miasta currentName jest to pierwsze i ostatnie przeszukanie
             addCity(visited, currentName, 0, 0);
             //bierze listę połączeń z hashmapy
             Cities linkList = searchHash(hash, currentName);
-            
+
             if (linkList != NULL) {
                 CityNext iterLinkedCity = linkList->first;
-                
+
                 // dla każdego połączenia, z zastrzeżeniem, że jeśli droga
                 // jest nadpisywana, nie uzględniamy nadpisywanego połączenia
                 while (iterLinkedCity != NULL) {
                     if (!rmRoad || !sameCity(currentName, city1)
                         || !sameCity(iterLinkedCity->cityName, city2)) {
                         HeapCard card = NULL;
-                    
+
                         // wrzucamy zaktualizowaną konstrukcję na stóg
                         if (!pushExtended(current, iterLinkedCity, card, heap))
                             return dijDeleter(best, current, heap, visited);
@@ -294,7 +294,7 @@ HeapCard dijkstra(Hash hash, const char *city1, const char *city2,
     }
     deleteList(visited);
     deleteHeap(heap);
-    
+
     // sprawdzamy, czy najlepszy wariant ustalony jest jednoznacznie
     if (!absolute) {
         deleteCard(best);

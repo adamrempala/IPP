@@ -39,7 +39,7 @@ struct Hashtable {
 };
 
 /**
- * Wskaźnik na strukturę Hashtable
+ * Wskaźnik na strukturę Hashtable.
  */
 typedef struct Hashtable *Hash;
 
@@ -67,7 +67,7 @@ void deleteTable(Hash table);
  */
 bool insertHash(Hash table, const char *key, Cities value);
 
-/** @brief Wyszukiwanie listy połączeń
+/** @brief Wyszukiwanie listy połączeń.
  * Na podstawie klucza szuka w hashmapie listy połączeń z danym miastem.
  * @param[in] table – wskaźnik na hashmapę.
  * @param[in] key       – wskaźnik na klucz (miasto).
@@ -76,7 +76,7 @@ bool insertHash(Hash table, const char *key, Cities value);
  */
 Cities searchHash(Hash table, const char *key);
 
-/** @brief Usuwa hasło
+/** @brief Usuwa hasło.
  * Usuwa hasło z hashmapy. Funkcja jest używana tylko w przypadku usuwania
  * całej tablicy, czyli @ref deleteTable. Funkcja nic nie zwraca.
  * @param[in,out] table – wskaźnik na hashmapę.
