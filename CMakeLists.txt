@@ -6,35 +6,41 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif ()
 
-# Nie chcemy ogl膮da膰 komunikatA3w o procentowym post臋pie kompilacji.
+# Nie chcemy ogl膮da膰 komunikat贸w o procentowym post臋pie kompilacji.
 set_property(GLOBAL PROPERTY RULE_MESSAGES OFF)
 
-# Chcemy zobaczy膰 polecenia wywoA俛ne przez make.
+# Chcemy zobaczy膰 polecenia wywo艂ane przez make.
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-# Ustawiamy wspA3lne opcje kompilowania dla wszystkich wariantA3w projektu.
+# Ustawiamy wsp贸lne opcje kompilowania dla wszystkich wariant贸w projektu.
 set(CMAKE_C_FLAGS "-std=c11 -Wall -Wextra")
-# DomyA沴ne opcje dla wariantA3w Release i Debug s膮 sensowne.
-# JeA沴i to konieczne, ustawiamy tu inne.
+# Domy艣lne opcje dla wariant贸w Release i Debug s膮 sensowne.
+# Je艣li to konieczne, ustawiamy tu inne.
 # set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG")
 # set(CMAKE_C_FLAGS_DEBUG "-g")
 
-# Wskazujemy pliki AorA3dA俹we.
+# Wskazujemy pliki 藕r贸d艂owe.
 set(SOURCE_FILES
     src/strdup.c
     src/strdup.h
+    src/rmake.c
+    src/rmake.h
     src/prime.c
     src/prime.h
-    src/hashtable.c
-    src/hashtable.h
-    src/road.c
-    src/road.h
-    src/priqueue.c
-    src/priqueue.h
-    src/dijkstra.c
-    src/dijkstra.h
+    src/htab.c
+    src/htab.h
+    src/cities.c
+    src/cities.h
+    src/heap.c
+    src/heap.h
+    src/route.c
+    src/route.h
+    src/newdij.c
+    src/newdij.h
     src/map.c
     src/map.h
+    src/input.c
+    src/input.h
     src/map_main.c)
 
 # Wskazujemy plik wykonywalny.
@@ -43,13 +49,13 @@ add_executable(map ${SOURCE_FILES})
 # Wskazujemy biblioteki.
 target_link_libraries(map m)
 
-# Dodajemy obsA倁g臋 Doxygena: sprawdzamy, czy jest zainstalowany i jeA沴i tak to:
+# Dodajemy obs艂ug臋 Doxygena: sprawdzamy, czy jest zainstalowany i je艣li tak to:
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
     # Wskazujemy lokalizacj膮 pliku konfiguracyjnego i podajemy jego docelow膮 lokalizacj臋 w folderze, gdzie nast臋puje kompilacja.
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-    # Dodajemy cel doc: uA1ycie make doc spowoduje wywoA俛nie doxygena z odpowiednim plikiem konfiguracyjnym w folderze kompilacji.
-    # Na wyjA沜ie zostanie wypisany odpowiedni komentarz.
+    # Dodajemy cel doc: u偶ycie make doc spowoduje wywo艂anie doxygena z odpowiednim plikiem konfiguracyjnym w folderze kompilacji.
+    # Na wyj艣cie zostanie wypisany odpowiedni komentarz.
     add_custom_target(doc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
